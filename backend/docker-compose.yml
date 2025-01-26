@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - ${PORT1}:27017
+    environment:
+      - DB_NAME = ${DB_NAME}
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
