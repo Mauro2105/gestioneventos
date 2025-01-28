@@ -19,7 +19,7 @@ const createEvent = async (req, res) => {
             time,
             location,
             description,
-            createdBy
+            createdBy: req.user.id
         });
         await event.save();
         res.status(200).json({ message: "Event created successfully", event });
@@ -61,17 +61,25 @@ const filterEvents = async (req, res) => {
         const filters = {};
 
         if (date) {
-            filters.date = new Date(date);
+            const startOfDay = new Date(`${date}T00:00:00.000Z`);
+            const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+
+            filters.date = { $gte: startOfDay, $lte: endOfDay };
+
         }
 
         if (location) {
             filters.location = { $regex: location, $options: 'i' };
         }
         console.log('Filters:', filters)
+
         const events = await Event.find(filters);
+
 
         res.status(200).json({ message: "Events found", events });
     } catch (error) {
+        
         res.status(400).json({ message: "Error filtering events", error });
     }
 }
