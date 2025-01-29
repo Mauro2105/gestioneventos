@@ -94,10 +94,18 @@ const Events = () => {
     }
 
     try {
+
+      const fixedDateString = formData.date ? `${formData.date}T00:00:00.000z` : "";
+
+      const newEventData = {
+        ...formData,
+        date: fixedDateString,
+      }
+
       if (updateId) {
-        await updateEvent(updateId, formData, token);
+        await updateEvent(updateId, newEventData, token);
       } else {
-        await createEvent(formData, token);
+        await createEvent(newEventData, token);
       }
 
       // Recarga los eventos
@@ -242,7 +250,7 @@ const Events = () => {
                 <TableRow key={event._id}>
                   <TableCell>{event.name}</TableCell>
                   <TableCell>
-                    {new Date(event.date).toLocaleDateString()}
+                    {new Date(event.date).toLocaleDateString("en-US", { timeZone: "UTC"})}
                   </TableCell>
                   <TableCell>{event.time}</TableCell>
                   <TableCell>{event.location}</TableCell>
